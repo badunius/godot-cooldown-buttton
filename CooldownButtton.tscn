@@ -1,0 +1,75 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Cooldown.shader" type="Shader" id=1]
+
+[sub_resource type="ShaderMaterial" id=2]
+resource_local_to_scene = true
+shader = ExtResource( 1 )
+shader_param/Progress = 1.0
+shader_param/isDisabled = 0.0
+shader_param/isHovered = 0.0
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends TextureButton
+tool
+
+
+export var cooldown = 1.0
+export var progress = 1.0
+export var automate = true
+
+
+func _ready() -> void:
+	pass
+
+
+func _process(delta) -> void:
+	if automate:
+		progress = clamp(progress + delta / cooldown, 0.0, 1.0)
+	
+	material.set_shader_param('Progress', progress)
+	material.set_shader_param('isDisabled', 1.0 if disabled else 0.0)
+	material.set_shader_param('isHovered', 1.0 if is_hovered() else 0.0)
+	pass
+
+
+func _set(property: String, value) -> bool:
+	match property:
+		\"texture_normal\":
+			material.set_shader_param(\"Texture\", value)
+		\"texture_hover\":
+			material.set_shader_param(\"HoverTexture\", value)
+	
+	return property in get_property_list()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"
+
+[node name="CooldownButton" type="TextureButton"]
+material = SubResource( 2 )
+margin_right = 32.0
+margin_bottom = 32.0
+shortcut_in_tooltip = false
+expand = true
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
